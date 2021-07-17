@@ -1,3 +1,4 @@
+import { ErrorHandler } from "../../../../Error/ErrorHandler";
 import { User } from "../../model/User";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 
@@ -10,7 +11,13 @@ class CreateUserUseCase {
   constructor(private usersRepository: IUsersRepository) {}
 
   execute({ email, name }: IRequest): User {
-    // Complete aqui
+    const checkUser = this.usersRepository.findByEmail(email);
+    if (checkUser) {
+      throw new ErrorHandler("user exists", 400);
+    }
+
+    const newUser = this.usersRepository.create({ name, email });
+    return newUser;
   }
 }
 
